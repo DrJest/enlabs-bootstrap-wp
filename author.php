@@ -90,6 +90,8 @@
                   <script>
                     var loc = "<?php the_author_meta('location', $id); ?>".split(",");
                     (function($) {
+                      if (loc.length!=2) 
+                        return $("#map-canvas").hide().parent().append("N/A");
                       var map = new google.maps.Map($("#map-canvas")[0], {
                             zoom: 10,
                             disableDefaultUI: true

@@ -286,7 +286,7 @@ add_action( 'login_enqueue_scripts', 'enlightenedlabsbootstrapwp_scripts' );
 
 		$(function() {
 			$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</i>');
-			$("#location").attr("disabled",1).hide().parent().append("<div id='map-canvas'></div>");
+			$("#location").hide().parent().append("<div id='map-canvas'></div>");
 			map = new google.maps.Map($("#map-canvas")[0], {
 			      zoom: 10,
 			      disableDefaultUI: true
