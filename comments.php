@@ -127,7 +127,7 @@ if ( post_password_required() ) {
 <script type="text/javascript">
 	  	gapi.comments.render("comments", { 
 	  		href: window.location,
-	  		width: '624',
+	  		width: jQuery(".blog-main").width(),
 	  		first_party_property: 'BLOGGER',
 	  		view_type: 'FILTERED_POSTMOD'
 	  	});
