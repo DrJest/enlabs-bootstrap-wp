@@ -1,0 +1,41 @@
+html {
+	overflow-x: hidden;
+	max-width: 100%;
+}
+body.login {
+	background-color: #000;
+	background-image: url('bg.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: 100%;
+}
+
+.wp-social-login-widget {
+	text-align: center;
+}
+
+.login .message {
+	text-align: center;
+	background-color: rgba(122,242,65,0.8);
+	border-color: #7af241;
+}
+
+.login h1 a {
+	background-image: url('login-logo.png');
+	background-size: 100px;
+	height: 150px;
+}
+
+.login label, .login input, #nav {
+	display:none!important;
+}
+
+.login #backtoblog a {
+	color: #FFF!important;
+	text-shadow: rgba(50,50,50,0.9) 0 1px 0;
+	padding: 2px;
+}
+
+.login #backtoblog a:hover {
+	color: #7af241!important;
+}
