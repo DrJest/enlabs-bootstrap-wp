@@ -24,7 +24,7 @@
           		echo '<tr data-id="'.$v->ID.'">';
           		echo '<td><a target="_blank" href="'.$v->gplus.'">'.$v->user_login.'</a></td>';
           		echo '<td>'.$v->user_email.'</td>';
-          		echo '<td><a href="https://telegram.me/'.$v->telegram.'" target="_blank">'.$v->telegram.'</a></td>';
+          		echo '<td><a href="https://telegram.me/'.str_replace("@", "", $v->telegram).'" target="_blank">'.$v->telegram.'</a></td>';
           		echo '<td id="address-'.$v->ID.'"></td>';
           		echo '</tr>';
           	}
