@@ -112,7 +112,7 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
                     $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Logout" href="<?php echo wp_logout_url(); ?>">Logout</a></li>')
                   <?php } else { ?>
                     $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Login" href="./wp-login.php">Login</a></li>')
-                  <?php }
+                  <?php } ?>
                 })
               })(jQuery)
             </script>
