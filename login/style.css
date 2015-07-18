@@ -7,7 +7,8 @@ body.login {
 	background-image: url('bg.png');
 	background-repeat: no-repeat;
 	background-attachment: fixed;
-	background-size: 100%;
+	background-size: cover;
+	background-position: center top;
 }
 
 .wp-social-login-widget {
