@@ -107,7 +107,12 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
             <script type="text/javascript">
               (function($) {
                 $(document).ready(function() {
-                  $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Login" href="./wp-login.php">Login</a></li>')
+                  <?php
+                    if ( is_user_logged_in() ) {  ?>
+                    $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Logout" href="<?php echo wp_logout_url(); ?>">Logout</a></li>')
+                  <?php } else { ?>
+                    $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Login" href="./wp-login.php">Login</a></li>')
+                  <?php }
                 })
               })(jQuery)
             </script>
