@@ -25,7 +25,7 @@
           		echo '<td><a target="_blank" href="'.$v->gplus.'">'.$v->user_login.'</a></td>';
           		echo '<td>'.$v->user_email.'</td>';
           		echo '<td><a href="https://telegram.me/'.str_replace("@", "", $v->telegram).'" target="_blank">'.$v->telegram.'</a></td>';
-          		echo '<td id="address-'.$v->ID.'">'.$v->address.'</td>';
+              echo '<td id="address-'.$v->ID.'">'.($v->address?$v->address:"N/D").'</td>';
           		echo '</tr>';
           	}
 
@@ -58,9 +58,7 @@
                     bounds.extend(results[0].geometry.location);
                     map.fitBounds(bounds);
                   });
-			<?php  	else :
-              echo "N/D";
-              endif;
+			<?php  	endif;
               }	?>
             })(jQuery);
           </script>
