@@ -261,9 +261,9 @@ function show_custom_profile_edit() { 	?>
 	</style>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script type="text/javascript">
-		var map, markers = [], marker = false, me = false, bounds;
+		var map, markers = [], marker = false, me = false, unsaved = false;
 		(function($) {
-	        var dragEND = function(e) {
+	        var dragEND = function(e, precise_address) {
 	          if(marker) 
 	            marker.setMap(null)
 	          marker = new google.maps.Marker({
@@ -274,76 +274,89 @@ function show_custom_profile_edit() { 	?>
 	            animation: google.maps.Animation.BOUNCE
 	          });
 	          google.maps.event.addListener(marker, 'dragend', dragEND);
-	          $("#location").val(e.latLng.A+","+e.latLng.F);
+			  var geocoder = new google.maps.Geocoder();
+              geocoder.geocode( { latLng: e.latLng }, function(results, status) {
+              	var addr = results[0].formatted_address;
+              	$("#address").val( precise_address ? precise_address : addr ).attr("readonly", 1);
+              	$("#geocode-edit").show();
+              	unsaved = false;
+              	var bounds = new google.maps.LatLngBounds();
+              	bounds.extend(me.position);
+              	bounds.extend(e.latLng);
+              	map.fitBounds(bounds);
+              });
 	        };
-			function initiate_map(lat,lng) {
-		        var pos = new google.maps.LatLng(lat,lng);
-		        bounds = new google.maps.LatLngBounds();
+			function initiate_map(latlng) {
 		        me = new google.maps.Marker({
-		          position: pos,
+		          position: latlng,
 		          map: map,
 		          title: "Current Position"
 		        });
-		       	bounds.extend(me.position);
-				var user_ll = $("#location").val() ? $("#location").val().split(",") : [lat,lng];
-				var user_pos = new google.maps.LatLng(user_ll[0],user_ll[1]);
-		       	bounds.extend(user_pos);
-		        dragEND( { latLng: user_pos } );
 		        google.maps.event.addListener(map, 'click', dragEND);
-		        map.setCenter(pos);
-		        map.fitBounds(bounds);
-		        var geocoder = new google.maps.Geocoder();
-                geocoder.geocode( { latLng: user_pos }, function(results, status) {
-                    $("#geocode").val(results[0].formatted_address)
-                })
+
+		        var addr = $("#address").val();
+		        if(!addr) 
+		        	return dragEND( { latLng: me.position } );
+                (new google.maps.Geocoder()).geocode( { address: addr }, function(results, status) {
+                    var user_pos = results[0].geometry.location;
+		        	dragEND( { latLng: user_pos } , addr);
+                });
 		    }
 
 			$(function() {
 				$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</span>');
-				var p = $("#location").hide().parent().append("<div id='map-canvas'></div>");
-				p.append('Your Address: <input id="geocode"><input hidden type="button" id="geocode-edit" value="Edit"><div id="geocode-res" hidden></div>');
+				var p = $("#address").parent()
+				p.append('<input hidden type="button" id="geocode-edit" value="Edit" class="description"><div id="geocode-res" hidden></div>').append("<div id='map-canvas'></div>");;
 				var geocoder = new google.maps.Geocoder();
-                $("#geocode").on("keydown", function(e) {
+                $("#address").on("keydown", function(e) {
 					if(e.keyCode == 13) {
 						e.preventDefault();
 			            geocoder.geocode( { address: $(this).val() }, function(results, status) {
 			                $("#geocode").hide();
-			                $("#geocode-res").show();
+			                $("#geocode-res").html('').show();
 			                $("#geocode-edit").show();
-			                $("#geocode-res").html('');
 			                for (i in results) {
 			                	var r = results[i];
-			                	$("<span>").css({display: "block", cursor: "pointer"}).addClass("geocode-result").text(r.formatted_address).data("lat", r.geometry.location.A).data("lng", r.geometry.location.F).appendTo($("#geocode-res"))
+			                	$("<span>").css({display: "block", cursor: "pointer"}).addClass("geocode-result").text(r.formatted_address).data("lat", r.geometry.location.A).data("lng", r.geometry.location.F).appendTo($("#geocode-res"));
 			                }
 			            });
 					}
+				}).on("change", function() {
+					unsaved = true;
 				})
 				$("#geocode-res").on("click", ".geocode-result", function(e) {
 					var pos = new google.maps.LatLng($(this).data("lat"), $(this).data("lng"));
-					dragEND({latLng:pos});
+					dragEND({latLng:pos}, $(this).text());
 					$("#geocode-edit").click();
-					$("#geocode").val($(this).text())
+					$("#address").attr("readonly", true);
+					unsaved = false;
 				})
 				$("#geocode-edit").click(function(e) {
 					e.preventDefault();
-					$("#geocode").show();
+					$("#address").attr("readonly", false);
 					$(this).hide();
 					$("#geocode-res").hide();
+				})
+				$("#your-profile").on("submit", function(e){
+					if(unsaved) {
+						e.preventDefault();
+						alert("Please, confirm your address")
+						return;
+					}
+					$("#address").attr("readonly", 0);
 				})
 				map = new google.maps.Map($("#map-canvas")[0], {
 				      zoom: 10,
 				      disableDefaultUI: true
 			    });
-				if(navigator.geolocation) {
+			    if(navigator.geolocation) {
 				  navigator.geolocation.getCurrentPosition(function(position) {
-				    initiate_map(position.coords.latitude, position.coords.longitude);
+				    initiate_map(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
 				  }, function() {
-				    var user_ll = $("#location").val().split(",");
-				    initiate_map(user_ll[0], user_ll[1]);
+				    initiate_map(0,0);
 				  });
 				} else {
-				    var user_ll = $("#location").val().split(",");
-				    initiate_map(user_ll[0], user_ll[1]);
+				    initiate_map(0,0);
 				}
 			});
 		})(jQuery);
@@ -363,7 +376,7 @@ function modify_contact_methods($profile_fields) {
 	$profile_fields['comm'] = 'Home Community';
 	$profile_fields['telegram'] = 'Telegram Username';
 	$profile_fields['gplus'] = 'Google+ URL';
-	$profile_fields['location'] = 'Your Location';
+	$profile_fields['address'] = 'Your Address';
 
 	return $profile_fields;
 }

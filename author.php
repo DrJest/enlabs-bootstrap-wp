@@ -85,27 +85,27 @@
                   Location
                 </td>
                 <td>
+                  <?php the_author_meta('address', $id); ?>
                   <div id="map-canvas" style="min-height: 300px"></div>
                   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script> 
                   <script>
-                    var loc = "<?php the_author_meta('location', $id); ?>".split(",");
+                    var addr = "<?php the_author_meta('address', $id); ?>";
                     (function($) {
-                      if (loc.length!=2) 
-                        return $("#map-canvas").hide().parent().append("N/A");
+                      if (!addr) 
+                        return $("#map-canvas").hide();
                       var map = new google.maps.Map($("#map-canvas")[0], {
-                            zoom: 10,
+                            zoom: 13,
                             disableDefaultUI: true
                         });
                       var geocoder = new google.maps.Geocoder();
-                      var pos = new google.maps.LatLng(loc[0],loc[1]);
-                      var me = new google.maps.Marker({
-                        position: pos,
-                        map: map,
-                        title: "Current Position"
-                      });
-                      map.setCenter(pos)
-                      geocoder.geocode( { latLng: pos }, function(results, status) {
-                        $("#map-canvas").parent().prepend(results[0].formatted_address)
+                      geocoder.geocode( { address : addr }, function(results, status) {
+                        var me = new google.maps.Marker({
+                          position: results[0].geometry.location,
+                          map: map,
+                          title: "Current Position",
+                          zoom: 10
+                        });
+                        map.setCenter(results[0].geometry.location);
                       })
                     })(jQuery);
                   </script>
