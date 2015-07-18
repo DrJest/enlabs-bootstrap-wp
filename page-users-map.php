@@ -22,7 +22,7 @@
           	$users = get_users();
           	foreach ($users as $k => $v) {
           		echo '<tr data-id="'.$v->ID.'">';
-          		echo '<td><a target="_blank" href="'.$v->user_url.'">'.$v->user_login.'</a></td>';
+          		echo '<td><a target="_blank" href="'.$v->gplus.'">'.$v->user_login.'</a></td>';
           		echo '<td>'.$v->user_email.'</td>';
           		echo '<td><a href="https://telegram.org/'.$v->telegram.'" target="_blank">'.$v->telegram.'</a></td>';
           		echo '<td id="address-'.$v->ID.'"></td>';
