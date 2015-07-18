@@ -107,7 +107,7 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
             <script type="text/javascript">
               (function($) {
                 $(document).ready(function() {
-                  $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Login" href="./wp-login">Login</a></li>')
+                  $(".navbar-nav").last().append('<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9999"><a title="Login" href="./wp-login.php">Login</a></li>')
                 })
               })(jQuery)
             </script>
