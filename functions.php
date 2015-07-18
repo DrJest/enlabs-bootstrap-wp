@@ -118,7 +118,7 @@ add_action( 'after_setup_theme', 'enlightenedlabsbootstrapwp_setup' );
 endif;
 
 /**
- * Enqueue scripts and styles for front-end.
+ * Enqueue scripts and styles for front-end and login page
  *
  * @since EnlightenedLabs Bootstrap WP 1.0
  */
@@ -137,6 +137,7 @@ function enlightenedlabsbootstrapwp_scripts() {
 	wp_enqueue_script( 'scripts-js', get_template_directory_uri() . '/js/scripts.js', array( 'jquery' ), '', true );
 }
 add_action( 'wp_enqueue_scripts', 'enlightenedlabsbootstrapwp_scripts' );
+add_action( 'login_enqueue_scripts', 'enlightenedlabsbootstrapwp_scripts' );
 
 /**
  * Register widgetized areas, including main sidebar and three widget-ready columns in the footer.
@@ -209,6 +210,8 @@ add_action( 'widgets_init', 'enlightenedlabsbootstrapwp_widgets_init' );
 /**
  * Enqueue scripts and styles for login page.
  * Applies custom login form and logos.
+ *
+ * @since EnlightenedLabs Bootstrap WP 1.0
  */
 function custom_login_form() { ?>
 	<link rel="stylesheet" type="text/css" href="<?php echo get_bloginfo('stylesheet_directory'); ?>/login/style.css" />
@@ -219,30 +222,37 @@ function custom_login_form() { ?>
 			});
 		})(jQuery)
 	</script>
-	</head>
-	<body>
-		<?php //do_action( 'wordpress_social_login' ); ?>
-	</body>
-	</html>
-	
 <?php
 }
 add_action( 'login_head'                      , 'custom_login_form' );
+
+/**
+ * Replace url when login logo is clicked 
+ *
+ * @since EnlightenedLabs Bootstrap WP 1.0
+ */
 function my_login_logo_url() {
 	return get_bloginfo( 'url' );
 }
 add_filter( 'login_headerurl', 'my_login_logo_url' );
+
+/**
+ * Enqueue scripts and styles for login page.
+ * Applies custom login form and logos.
+ *
+ * @since EnlightenedLabs Bootstrap WP 1.0
+ */
 function my_login_logo_url_title() {
 	return 'Enlightened Labs';
 }
 add_filter( 'login_headertitle', 'my_login_logo_url_title' );
-add_action( 'login_enqueue_scripts', 'enlightenedlabsbootstrapwp_scripts' );
 
 /**
+ * Add required styles and script to show a map in user profile
  *
- *
+ * @since EnlightenedLabs Bootstrap WP 1.0
  */
-	function show_custom_profile_edit() { 	?>
+function show_custom_profile_edit() { 	?>
 	<style type="text/css">
 		#map-canvas {
 			min-height: 400px;
@@ -251,66 +261,71 @@ add_action( 'login_enqueue_scripts', 'enlightenedlabsbootstrapwp_scripts' );
 	</style>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script type="text/javascript">
-	var map, markers = [], marker = false, me = false, bounds;
-	(function($) {
-		function initiate_map(lat,lng) {
-	        var dragEND = function(e) {
-	          if(marker) 
-	            marker.setMap(null)
-	          marker = new google.maps.Marker({
-	            position: e.latLng,
-	            draggable: true,
-	            map: map,
-	            title: "Saved Position",
-	            animation: google.maps.Animation.BOUNCE
-	          });
-	          google.maps.event.addListener(marker, 'dragend', dragEND);
-	          $("#location").val(e.latLng.A+","+e.latLng.F);
-	        };
-	        var pos = new google.maps.LatLng(lat,lng);
-	        bounds = new google.maps.LatLngBounds();
-	        me = new google.maps.Marker({
-	          position: pos,
-	          map: map,
-	          title: "Current Position"
-	        });
-	       	bounds.extend(me.position);
-			var user_ll = $("#location").val() ? $("#location").val().split(",") : [lat,lng];
-			var user_pos = new google.maps.LatLng(user_ll[0],user_ll[1]);
-	       	bounds.extend(user_pos);
-	        dragEND( { latLng: user_pos } );
-	        google.maps.event.addListener(map, 'click', dragEND);
-	        map.setCenter(pos);
-	        map.fitBounds(bounds);
-	    }
+		var map, markers = [], marker = false, me = false, bounds;
+		(function($) {
+			function initiate_map(lat,lng) {
+		        var dragEND = function(e) {
+		          if(marker) 
+		            marker.setMap(null)
+		          marker = new google.maps.Marker({
+		            position: e.latLng,
+		            draggable: true,
+		            map: map,
+		            title: "Saved Position",
+		            animation: google.maps.Animation.BOUNCE
+		          });
+		          google.maps.event.addListener(marker, 'dragend', dragEND);
+		          $("#location").val(e.latLng.A+","+e.latLng.F);
+		        };
+		        var pos = new google.maps.LatLng(lat,lng);
+		        bounds = new google.maps.LatLngBounds();
+		        me = new google.maps.Marker({
+		          position: pos,
+		          map: map,
+		          title: "Current Position"
+		        });
+		       	bounds.extend(me.position);
+				var user_ll = $("#location").val() ? $("#location").val().split(",") : [lat,lng];
+				var user_pos = new google.maps.LatLng(user_ll[0],user_ll[1]);
+		       	bounds.extend(user_pos);
+		        dragEND( { latLng: user_pos } );
+		        google.maps.event.addListener(map, 'click', dragEND);
+		        map.setCenter(pos);
+		        map.fitBounds(bounds);
+		    }
 
-		$(function() {
-			$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</i>');
-			$("#location").hide().parent().append("<div id='map-canvas'></div>");
-			map = new google.maps.Map($("#map-canvas")[0], {
-			      zoom: 10,
-			      disableDefaultUI: true
-		    });
-			if(navigator.geolocation) {
-			  navigator.geolocation.getCurrentPosition(function(position) {
-			    initiate_map(position.coords.latitude, position.coords.longitude);
-			  }, function() {
-			    var user_ll = $("#location").val().split(",");
-			    initiate_map(user_ll[0], user_ll[1]);
-			  });
-			} else {
-			    var user_ll = $("#location").val().split(",");
-			    initiate_map(user_ll[0], user_ll[1]);
-			}
-		});
-	})(jQuery);
+			$(function() {
+				$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</i>');
+				$("#location").hide().parent().append("<div id='map-canvas'></div>");
+				map = new google.maps.Map($("#map-canvas")[0], {
+				      zoom: 10,
+				      disableDefaultUI: true
+			    });
+				if(navigator.geolocation) {
+				  navigator.geolocation.getCurrentPosition(function(position) {
+				    initiate_map(position.coords.latitude, position.coords.longitude);
+				  }, function() {
+				    var user_ll = $("#location").val().split(",");
+				    initiate_map(user_ll[0], user_ll[1]);
+				  });
+				} else {
+				    var user_ll = $("#location").val().split(",");
+				    initiate_map(user_ll[0], user_ll[1]);
+				}
+			});
+		})(jQuery);
 	</script>
 <?php 
-	}
+}
 
 add_action('edit_user_profile','show_custom_profile_edit');
 add_action('show_user_profile','show_custom_profile_edit');
 
+/**
+ * Add custom fields in wordpress database
+ *
+ * @since EnlightenedLabs Bootstrap WP 1.0
+ */
 function modify_contact_methods($profile_fields) { 
 	$profile_fields['comm'] = 'Home Community';
 	$profile_fields['telegram'] = 'Telegram Username';

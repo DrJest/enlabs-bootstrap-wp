@@ -66,11 +66,8 @@ a, a:visited, a:active, a:focus, .btn-link:focus {
   .widget {
     background: rgba(255,255,255,0) !important;
   }
-
   #header-search input {
-    padding-right: 20px;
     min-width: 100%;
-    transition: all 1s;
   }
 }
 
