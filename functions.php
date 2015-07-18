@@ -263,20 +263,20 @@ function show_custom_profile_edit() { 	?>
 	<script type="text/javascript">
 		var map, markers = [], marker = false, me = false, bounds;
 		(function($) {
+	        var dragEND = function(e) {
+	          if(marker) 
+	            marker.setMap(null)
+	          marker = new google.maps.Marker({
+	            position: e.latLng,
+	            draggable: true,
+	            map: map,
+	            title: "Saved Position",
+	            animation: google.maps.Animation.BOUNCE
+	          });
+	          google.maps.event.addListener(marker, 'dragend', dragEND);
+	          $("#location").val(e.latLng.A+","+e.latLng.F);
+	        };
 			function initiate_map(lat,lng) {
-		        var dragEND = function(e) {
-		          if(marker) 
-		            marker.setMap(null)
-		          marker = new google.maps.Marker({
-		            position: e.latLng,
-		            draggable: true,
-		            map: map,
-		            title: "Saved Position",
-		            animation: google.maps.Animation.BOUNCE
-		          });
-		          google.maps.event.addListener(marker, 'dragend', dragEND);
-		          $("#location").val(e.latLng.A+","+e.latLng.F);
-		        };
 		        var pos = new google.maps.LatLng(lat,lng);
 		        bounds = new google.maps.LatLngBounds();
 		        me = new google.maps.Marker({
@@ -292,11 +292,44 @@ function show_custom_profile_edit() { 	?>
 		        google.maps.event.addListener(map, 'click', dragEND);
 		        map.setCenter(pos);
 		        map.fitBounds(bounds);
+		        var geocoder = new google.maps.Geocoder();
+                geocoder.geocode( { latLng: user_pos }, function(results, status) {
+                    $("#geocode").val(results[0].formatted_address)
+                })
 		    }
 
 			$(function() {
-				$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</i>');
-				$("#location").hide().parent().append("<div id='map-canvas'></div>");
+				$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</span>');
+				var p = $("#location").hide().parent().append("<div id='map-canvas'></div>");
+				p.append('Your Address: <input id="geocode"><input hidden type="button" id="geocode-edit" value="Edit"><div id="geocode-res" hidden></div>');
+				var geocoder = new google.maps.Geocoder();
+                $("#geocode").on("keydown", function(e) {
+					if(e.keyCode == 13) {
+						e.preventDefault();
+			            geocoder.geocode( { address: $(this).val() }, function(results, status) {
+			                $("#geocode").hide();
+			                $("#geocode-res").show();
+			                $("#geocode-edit").show();
+			                $("#geocode-res").html('');
+			                for (i in results) {
+			                	var r = results[i];
+			                	$("<span>").css({display: "block", cursor: "pointer"}).addClass("geocode-result").text(r.formatted_address).data("lat", r.geometry.location.A).data("lng", r.geometry.location.F).appendTo($("#geocode-res"))
+			                }
+			            });
+					}
+				})
+				$("#geocode-res").on("click", ".geocode-result", function(e) {
+					var pos = new google.maps.LatLng($(this).data("lat"), $(this).data("lng"));
+					dragEND({latLng:pos});
+					$("#geocode-edit").click();
+					$("#geocode").val($(this).text())
+				})
+				$("#geocode-edit").click(function(e) {
+					e.preventDefault();
+					$("#geocode").show();
+					$(this).hide();
+					$("#geocode-res").hide();
+				})
 				map = new google.maps.Map($("#map-canvas")[0], {
 				      zoom: 10,
 				      disableDefaultUI: true
