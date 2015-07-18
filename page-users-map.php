@@ -43,23 +43,23 @@
                     disableDefaultUI: true
                 });
           	<?php
-              	foreach ($users as $k => $v) { ?>
-              	if("<?php echo $v->location; ?>".length) {
+              	foreach ($users as $k => $v) { 
+                  if($v->location) : ?>
               		var pos = new google.maps.LatLng(<?php echo $v->location; ?>);
 	              	var marker = new google.maps.Marker({
-						position: pos,
-						map: map,
-						title: "<?php echo $v->display_name; ?>"
-					});
-					marker.set("id", "<?php echo $v->ID; ?>");
-					bounds.extend(pos);
-		          	var geocoder = new google.maps.Geocoder();
-		            geocoder.geocode( { latLng: pos }, function(results, status) {
-		                $("#address-<?php echo $v->ID; ?>").text(results[0].formatted_address)
-		            });
-		            markers.push(marker);
-              	}
-			<?php  	}	?>
+        						position: pos,
+        						map: map,
+        						title: "<?php echo $v->display_name; ?>"
+        					});
+        					marker.set("id", "<?php echo $v->ID; ?>");
+        					bounds.extend(pos);
+        		          	var geocoder = new google.maps.Geocoder();
+        		            geocoder.geocode( { latLng: pos }, function(results, status) {
+        		                $("#address-<?php echo $v->ID; ?>").text(results[0].formatted_address)
+        		            });
+        		            markers.push(marker);
+			<?php  	endif;
+              }	?>
 				map.fitBounds(bounds);
             })(jQuery);
           </script>
