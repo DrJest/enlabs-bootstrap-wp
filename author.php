@@ -47,7 +47,7 @@
                   Name
                 </td>
                 <td>
-                  <a target="_blank" href="<?php the_author_meta('gplus', $id); ?>#">
+                  <a target="_blank" href="<?php the_author_meta('cimy_uef_3', $id); ?>#">
                     <?php the_author_meta('first_name', $id); ?> <?php the_author_meta('last_name', $id); ?> (<?php the_author_meta('user_nicename', $id); ?>)
                   </a>
                 </td>
@@ -57,7 +57,7 @@
                   Home Community
                 </td>
                 <td>
-                  <a target="_blank" href="<?php the_author_meta('comm', $id); ?>">
+                  <a target="_blank" href="<?php the_author_meta('cimy_uef_2', $id); ?>">
                     <?php the_author_meta('comm', $id); ?> 
                   </a>
                 </td>
@@ -67,8 +67,8 @@
                   Telegram Nickname
                 </td>
                 <td>
-                  <a target="_blank" href="https://telegram.me/<?php echo substr(get_the_author_meta('telegram', $id),1); ?>">
-                    <?php the_author_meta('telegram', $id); ?>
+                  <a target="_blank" href="https://telegram.me/<?php echo substr(get_the_author_meta('cimy_uef_1', $id),1); ?>">
+                    <?php the_author_meta('cimy_uef_1', $id); ?>
                   </a>
                 </td>
               </tr>
@@ -85,11 +85,11 @@
                   Location
                 </td>
                 <td>
-                  <?php the_author_meta('address', $id); ?>
+                  <?php the_author_meta('cimy_uef_4', $id); ?>
                   <div id="map-canvas" style="min-height: 300px"></div>
                   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script> 
                   <script>
-                    var addr = "<?php the_author_meta('address', $id); ?>";
+                    var addr = "<?php the_author_meta('cimy_uef_4', $id); ?>";
                     (function($) {
                       if (!addr) 
                         return $("#map-canvas").hide();

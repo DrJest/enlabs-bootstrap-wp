@@ -1,5 +1,6 @@
 <?php
 add_filter('show_admin_bar', '__return_false');
+add_filter( 'got_rewrite', '__return_true' );
 /**
  * Enlightened Labs Bootstrap WP functions and definitions
  *
@@ -277,7 +278,7 @@ function show_custom_profile_edit() { 	?>
 			  var geocoder = new google.maps.Geocoder();
               geocoder.geocode( { latLng: e.latLng }, function(results, status) {
               	var addr = results[0].formatted_address;
-              	$("#address").val( precise_address ? precise_address : addr ).attr("readonly", 1);
+              	$("#cimy_uef_4").val( precise_address ? precise_address : addr ).attr("readonly", 1);
               	$("#geocode-edit").show();
               	unsaved = false;
               	var bounds = new google.maps.LatLngBounds();
@@ -294,7 +295,7 @@ function show_custom_profile_edit() { 	?>
 		        });
 		        google.maps.event.addListener(map, 'click', dragEND);
 
-		        var addr = $("#address").val();
+		        var addr = $("#cimy_uef_4").val();
 		        if(!addr) 
 		        	return dragEND( { latLng: me.position } );
                 (new google.maps.Geocoder()).geocode( { address: addr }, function(results, status) {
@@ -304,11 +305,10 @@ function show_custom_profile_edit() { 	?>
 		    }
 
 			$(function() {
-				$("#gplus").attr("disabled", "disabled").parent().append('<span class="description">Cannot be changed</span>');
-				var p = $("#address").parent()
+				var p = $("#cimy_uef_4").parent()
 				p.append('<input hidden type="button" id="geocode-edit" value="Edit" class="description"><div id="geocode-res" hidden></div>').append("<div id='map-canvas'></div>");;
 				var geocoder = new google.maps.Geocoder();
-                $("#address").on("keydown", function(e) {
+                $("#cimy_uef_4").on("keydown", function(e) {
 					if(e.keyCode == 13) {
 						e.preventDefault();
 			            geocoder.geocode( { address: $(this).val() }, function(results, status) {
@@ -328,12 +328,12 @@ function show_custom_profile_edit() { 	?>
 					var pos = new google.maps.LatLng($(this).data("lat"), $(this).data("lng"));
 					dragEND({latLng:pos}, $(this).text());
 					$("#geocode-edit").click();
-					$("#address").attr("readonly", true);
+					$("#cimy_uef_4").attr("readonly", true);
 					unsaved = false;
 				})
 				$("#geocode-edit").click(function(e) {
 					e.preventDefault();
-					$("#address").attr("readonly", false);
+					$("#cimy_uef_4").attr("readonly", false);
 					$(this).hide();
 					$("#geocode-res").hide();
 				})
@@ -343,7 +343,7 @@ function show_custom_profile_edit() { 	?>
 						alert("Please, confirm your address")
 						return;
 					}
-					$("#address").attr("readonly", 0);
+					$("#cimy_uef_4").attr("readonly", 0);
 				})
 				map = new google.maps.Map($("#map-canvas")[0], {
 				      zoom: 10,
@@ -372,6 +372,8 @@ add_action('show_user_profile','show_custom_profile_edit');
  *
  * @since EnlightenedLabs Bootstrap WP 1.0
  */
+
+/*
 function modify_contact_methods($profile_fields) { 
 	$profile_fields['comm'] = 'Home Community';
 	$profile_fields['telegram'] = 'Telegram Username';
@@ -381,7 +383,7 @@ function modify_contact_methods($profile_fields) {
 	return $profile_fields;
 }
 add_filter('user_contactmethods', 'modify_contact_methods');
-
+*/
 /**
  * Use get_the_excerpt() to print an excerpt by specifying a maximium number of characters.
  *
@@ -1284,3 +1286,19 @@ function enlightenedlabsbootstrapwp_comment( $comment, $args, $depth ) {
   endswitch; // end comment_type check
 }
 endif;
+
+function wsl_social_login_store_extended_data ($user_id, $provider, $identity)
+{
+$_SESSION['gplus_profile'] = $identity->profileURL;
+}
+ 
+add_action ('wsl_hook_process_login_after_wp_insert_user', 'wsl_social_login_store_extended_data', 10, 3);
+
+if(isset($_SESSION['gplus_profile'])) {
+  $id = get_current_user_id();
+  $gplus_profile = get_cimyFieldValue($id, 'GPLUS');
+  if($gplus_profile=="") {
+   set_cimyFieldValue($id, 'GPLUS', $_SESSION['gplus_profile']);
+   unset($_SESSION['gplus_profile']);
+  }
+}

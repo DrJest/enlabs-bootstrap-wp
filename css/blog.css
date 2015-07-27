@@ -9,7 +9,7 @@ body {
   margin: 0;
   background-image: url('../images/bg.png');
   background-size: auto 110%;
-  background-position: 115%;
+  background-position: right;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }

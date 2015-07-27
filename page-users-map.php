@@ -17,13 +17,21 @@
 
         <div class="col-sm-8 blog-main">
 
-        	<table>
+        	<table style="font-size: 0.7em">
+			<thead>
+				<th> Display Name </th>
+<?php if ( current_user_can( 'manage_options' ) ) { ?>
+				<th> Email </th>
+<?php } ?>
+				<th> Telegram </th>
+				<th> Address </th>
+			</thead>
           <?php 
           	$users = get_users();
           	foreach ($users as $k => $v) {
           		echo '<tr data-id="'.$v->ID.'">';
           		echo '<td><a target="_blank" href="'.$v->gplus.'">'.$v->user_login.'</a></td>';
-          		echo '<td>'.$v->user_email.'</td>';
+          		if ( current_user_can( 'manage_options' ) ) { echo '<td>'.$v->user_email.'</td>'; }
           		echo '<td><a href="https://telegram.me/'.str_replace("@", "", $v->telegram).'" target="_blank">'.$v->telegram.'</a></td>';
               echo '<td id="address-'.$v->ID.'">'.($v->address?$v->address:"N/D").'</td>';
           		echo '</tr>';
