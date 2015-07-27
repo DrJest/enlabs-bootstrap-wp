@@ -47,7 +47,7 @@
                   Name
                 </td>
                 <td>
-                  <a target="_blank" href="<?php the_author_meta('cimy_uef_3', $id); ?>#">
+                  <a target="_blank" href="<?php echo get_cimyFieldValue($id, 'GPLUS'); ?>#">
                     <?php the_author_meta('first_name', $id); ?> <?php the_author_meta('last_name', $id); ?> (<?php the_author_meta('user_nicename', $id); ?>)
                   </a>
                 </td>
@@ -57,8 +57,19 @@
                   Home Community
                 </td>
                 <td>
-                  <a target="_blank" href="<?php the_author_meta('cimy_uef_2', $id); ?>">
-                    <?php the_author_meta('comm', $id); ?> 
+                  <a target="_blank" href="<?php echo get_cimyFieldValue($id,'COMM'); ?>">
+                    <?php 
+			$re = "/<title [^>]+>(.*)<\\/title>/";  
+			$url = get_cimyFieldValue($id, 'COMM'); 
+			if($url) :
+			$ch = curl_init($url);
+			curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			$str = curl_exec($ch);
+			preg_match($re, $str, $matches);
+			echo str_replace(" - Community - Google+","",$matches[1]);
+			endif;
+ 		    ?>
                   </a>
                 </td>
               </tr>
@@ -67,8 +78,8 @@
                   Telegram Nickname
                 </td>
                 <td>
-                  <a target="_blank" href="https://telegram.me/<?php echo substr(get_the_author_meta('cimy_uef_1', $id),1); ?>">
-                    <?php the_author_meta('cimy_uef_1', $id); ?>
+                  <a target="_blank" href="https://telegram.me/<?php echo substr(get_cimyFieldValue($id, 'TELEGRAM'),1); ?>">
+                    <?php echo get_cimyFieldValue($id, 'TELEGRAM'); ?>
                   </a>
                 </td>
               </tr>
@@ -85,11 +96,11 @@
                   Location
                 </td>
                 <td>
-                  <?php the_author_meta('cimy_uef_4', $id); ?>
+                  <?php echo get_cimyFieldValue($id, 'ADDRESS'); ?>
                   <div id="map-canvas" style="min-height: 300px"></div>
                   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script> 
                   <script>
-                    var addr = "<?php the_author_meta('cimy_uef_4', $id); ?>";
+                    var addr = "<?php echo get_cimyFieldValue($id, 'ADDRESS'); ?>";
                     (function($) {
                       if (!addr) 
                         return $("#map-canvas").hide();
