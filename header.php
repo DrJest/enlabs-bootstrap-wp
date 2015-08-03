@@ -14,7 +14,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no, 
 initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <title><?php bloginfo('name'); ?><?php echo substr(wp_title(' | ', 0),0,-16); ?></title>
     <link rel="apple-touch-icon" sizes="57x57" href="<?php echo get_stylesheet_directory_uri(); ?>/icons/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="<?php echo get_stylesheet_directory_uri(); ?>/icons/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="<?php echo get_stylesheet_directory_uri(); ?>/icons/apple-icon-72x72.png">
@@ -33,6 +32,17 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="msapplication-TileImage" content="<?php echo get_stylesheet_directory_uri(); ?>/icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     
+    <style type="text/css">
+        .navbar .wp-social-login-provider-google img {
+            height: 30px;
+          }
+        .navbar .wp-social-login-provider-list {
+            margin-top: -5px;
+            height: 30px;
+            padding: 0;
+          }
+    </style>
+    <script src="https://apis.google.com/js/platform.js"></script>
 	<?php
 	  /*
 	   * We add some JavaScript to pages with the comment form
@@ -49,17 +59,14 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 	   */
 	  wp_head(); 
     ?>
-    <script src="https://apis.google.com/js/platform.js">
-      { lang: 'it' }
-    </script>
 
   </head>
   <body <?php body_class(); ?>>
     
-    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-static-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false" aria-controls="navbar">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false">
             <span class="sr-only"><?php _e( 'Toggle navigation', 'enlightenedlabsbootstrapwp' ); ?></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -95,24 +102,15 @@ initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
             <div class="navbar-text navbar-right" style="margin-left: 0px;">
               <?php do_action( 'wordpress_social_login' ); ?>
             </div>
-            <script>
+            <script type="text/javascript">
               jQuery('.wp-social-login-provider-google').find("img").attr("src","<?php echo get_bloginfo('stylesheet_directory'); ?>/login/sign-in-button-small.png")
               jQuery('.wp-social-login-connect-with').remove();
             </script>
-            <style>
-              .navbar .wp-social-login-provider-google img {
-                height: 30px;
-              }
-              .navbar .wp-social-login-provider-list {
-                margin-top: -5px;
-                height: 30px;
-                padding: 0;
-              }
-            </style>
+
           <?php } 
           ?> 
         	<!-- search form -->
-        	<form class="navbar-form navbar-right" role="search">
+        	<form class="navbar-form navbar-right">
         	  <div class="form-group" id="header-search">
               <i class="glyphicon glyphicon-search"></i>
         	    <input type="text" class="form-control <?php if(isset($_GET['s'])&&$_GET['s']!="") echo 'full'; ?>" placeholder="Search" name="s" value="<?php echo (isset($_GET['s'])&&$_GET['s']!="")?$_GET['s']:"";?>">
