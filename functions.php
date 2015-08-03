@@ -1302,3 +1302,136 @@ if(isset($_SESSION['gplus_profile'])) {
    unset($_SESSION['gplus_profile']);
   }
 }
+
+add_action( 'wp_ajax_associati', 'associati_callback' );
+function associati_callback() {
+    global $wpdb;
+    $id=get_current_user_id();
+    if(!$id)
+    	json_response(1, "Not Logged");
+    if(get_cimyFieldValue($id, 'TESSERA')) 
+    	json_response(1, "Gi&agrave; associato");
+    if($_POST['approve']!="on")
+        json_response(1, "Devi accettare le condizioni d'uso");
+
+    $name   = htmlentities($_POST['nome']);
+    $sname  = htmlentities($_POST['cognome']);
+    $nick   = htmlentities($_POST['nick']);
+    $natoa  = htmlentities($_POST['nato']);
+    $natoil = htmlentities($_POST['data']);
+    $comune = htmlentities($_POST['comune']);
+    $addres = htmlentities($_POST['via-pre']." ".$_POST['via']).", ".htmlentities($_POST['civico']);
+    $cap    = intval($_POST['cap']);
+    $prov   = htmlentities($_POST['prov']);
+    $tel    = intval($_POST['tel']);
+    $socio1 = htmlentities($_POST['socio1']);
+    $socio2 = htmlentities($_POST['socio2']);
+    $gplus  = get_cimyFieldValue($id, 'GPLUS');
+    $email  = get_userdata($id)->user_email;
+
+    // SET VALUES
+    set_cimyFieldValue($id, 'VERO_NOME',    $name);
+    set_cimyFieldValue($id, 'VERO_COGNOME', $sname);
+    set_cimyFieldValue($id, 'NATO_A',       $natoa);
+    set_cimyFieldValue($id, 'NATO_IL',      $natoil);
+    set_cimyFieldValue($id, 'COMUNE',       $comune);
+    set_cimyFieldValue($id, 'ADDRESS',      $addres);
+    set_cimyFieldValue($id, 'CAP',          $cap);
+    set_cimyFieldValue($id, 'PROVINCIA',    $prov);
+    set_cimyFieldValue($id, 'TELEFONO',     $tel);
+    set_cimyFieldValue($id, 'SOCIO_1',      $socio1);
+    set_cimyFieldValue($id, 'SOCIO_2',      $socio2);
+    set_cimyFieldValue($id, 'PENDING',      true);
+    wp_update_user( array( 'ID' => $id, 'nickname' => $nick ) );
+
+    $to = get_option( 'admin_email' );
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=UTF-8';
+    $headers[] = "To: $name $sname <$to>";
+    $headers[] = "Cc: $email";
+
+    $content = <<<HD
+        Ciao, amministratore!<br/>
+        $name $sname ha richiesto di associarsi a Enlightened Labs <br/>
+        I dati che ci sono stati forniti sono: <br/>
+
+        <table style="width: 90%;">
+            <tr>
+                <td> Nome   </td>
+                <td> $name  </td>
+            </tr>
+            <tr>
+                <td> Cognome   </td>
+                <td> $sname  </td>
+            </tr>
+            <tr>
+                <td> Nickname  </td>
+                <td> $nick  </td>
+            </tr>
+            <tr>
+                <td> Indirizzo E-mail  </td>
+                <td> <a href="mailto:$email">$email</a></td>
+            </tr>
+            <tr>
+                <td> Profilo Google Plus  </td>
+                <td> <a href="$gplus" target="_blank"> $gplus </a>  </td>
+            </tr>
+            <tr>
+                <td> Nato a   </td>
+                <td> $natoa  </td>
+            </tr>
+            <tr>
+                <td> in data  </td>
+                <td> $natoil  </td>
+            </tr>
+            <tr>
+                <td> A </td>
+                <td> $comune  </td>
+            </tr>
+            <tr>
+                <td> in   </td>
+                <td> $addres  </td>
+            </tr>
+            <tr>
+                <td> Civico   </td>
+                <td> $civico  </td>
+            </tr>
+            <tr>
+                <td> Provincia   </td>
+                <td> $prov  </td>
+            </tr>
+            <tr>
+                <td> CAP   </td>
+                <td> $cap  </td>
+            </tr>
+            <tr>
+                <td> Telefono   </td>
+                <td> $tel  </td>
+            </tr>
+            <tr><td colspan="2">Presentato dai soci</td></tr>
+            <tr>
+                <td> $socio1  </td>
+                <td> $socio2  </td>
+            </tr>
+HD;
+    if(wp_mail($to, "Richiesta di associazione a Enlightened Labs", $content, $header))
+        json_response(0, "OK");
+
+    json_response(1, "Impossibile inviare email agli amministratori");
+    wp_die();
+}
+
+function json_response($status, $message) {
+    header("Content-type: text/json");
+    $r = [ "status" => !$status?"OK":"ERROR", "message" => $message ];
+    echo json_encode($r, JSON_FORCE_OBJECT);
+    wp_die();
+}
+
+add_filter( 'wp_mail_from_name', function( $name ) {
+    return 'Enlightened Labs';
+});
+
+add_filter( 'wp_mail_from', function( $email ) {
+    return 'no-reply@enlightenedlabs.it';
+});

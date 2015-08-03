@@ -140,3 +140,8 @@ a img.aligncenter {
 		padding: 0;
   	} 
 }
+
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; max-height: 500px; }
+.autocomplete-suggestion { cursor: pointer; }
+.autocomplete-selected { background: #F0F0F0; }
+

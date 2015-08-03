@@ -60,7 +60,6 @@
           );
           wp_link_pages( $link_args );
         ?>
-        <div class="g-plusone" data-size="standard" data-annotation="inline" <?php if ( !is_single() ) echo 'data-href="' . get_permalink(). '"'; ?> data-width="300"></div>
         <p class="blog-post-meta">
         <?php if ( is_single() ) : ?>
         <span class="glyphicon glyphicon-folder-open"></span> Posted in <?php the_category(', ') ?> 

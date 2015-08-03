@@ -31,7 +31,6 @@
         <?php the_post_thumbnail( 'thumbnail' ); ?>
         </a>
         <?php endif; ?>
-        <div class="g-plusone" data-size="standard" data-annotation="inline" <?php if ( !is_single() ) echo 'data-href="' . get_permalink(). '"'; ?> data-width="300"></div>
         <?php 
     /* Include the post format-specific template for the content. If you want to
      * this in a child theme then include a file called called content-___.php
