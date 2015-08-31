@@ -1344,11 +1344,12 @@ function associati_callback() {
     set_cimyFieldValue($id, 'PENDING',      true);
     wp_update_user( array( 'ID' => $id, 'nickname' => $nick ) );
 
-    $to = get_option( 'admin_email' );
+    //$to = get_option( 'admin_email' );
+    $to = "dc.jest@gmail.com";
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=UTF-8';
     $headers[] = "To: $name $sname <$to>";
-    $headers[] = "Cc: $email";
+    $headers[] = "Cc:$email";
 
     $content = <<<HD
         Ciao, amministratore!<br/>

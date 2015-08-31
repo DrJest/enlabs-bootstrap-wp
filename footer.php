@@ -28,6 +28,13 @@
     </div>
 
     <?php 
+	if( !current_user_can( 'read_private_pages' ) && current_user_can('read') && get_cimyFieldValue( get_current_user_id(), 'PENDING' ) == "NO" ) { ?>
+<script>
+	(function($) {
+	$(".blog-header .container").append('<div class="alert alert-warning" id="associati-warning" role="alert">Attendi che un amministratore confermi che sei socio per utilizzare tutte le features del sito. <br/> Non sei ancora socio? <a href="/associati/" title="Associati"> Associati Ora! </a></div>');
+	})(jQuery);
+</script>	
+    <?php }
 	  /*
 	   * Always have wp_footer() just before the closing </body>
 	   * tag of your theme, or you will break many plugins, which

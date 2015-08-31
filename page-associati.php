@@ -73,8 +73,12 @@
         		});
 	            $("form").submit(function(e) {
 			e.preventDefault();
-			$.post("/wp-admin/admin-ajax.php", $(this).serialize(), function(data) {
-			    console.log(data);
+			$.post("/wp-admin/admin-ajax.php", $(this).serialize(), function(o) {
+                            if (o.status=="OK") {
+                                alert("Richiesta Inviata Correttamente");
+                                location.href = "/";
+                            }
+                            else alert(o.message);
 			});
         	    });
                     $("#nato").autocomplete({
@@ -85,7 +89,10 @@
                         lookup: comuni,
                         onSelect: function(s) {
                             $("#prov").attr("readonly",1).val(s.data.provincia);
-                            $("#cap").attr("readonly",1).val(s.data.cap);
+                            if(/^[0-9]+$/.test(s.data.cap)) 
+                                $("#cap").attr("readonly",1).val(s.data.cap);
+                            else
+                                $("#cap").attr("readonly",1).val(prompt("Inserisci il tuo cap",s.data.cap));
                             $("#comune").val(s.value);
                         },
                     groupBy: "provincia"
@@ -110,6 +117,7 @@
                 jQuery(".wp-social-login-provider-google").last().find("img").attr("src","http://www.enlightenedlabs.it/wp-content/themes/enlabs-bootstrap-wp/login/sign-in-button.png");
                 </script>
             <?php } ?>
+	<style type="text/css"> #associati-warning { display: none; } </style>
         </div><!-- /.blog-main -->
 
 
